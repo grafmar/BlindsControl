@@ -8,10 +8,8 @@ WiFiManager wm;
 ESP8266WebServer server(80);
 
 const int led = LED_BUILTIN;
-//const int relays[] = {D0,D1,D2,D3,D6,D5};
-//const int relays[] = {0,1,D2,D3,D6,D5};
-const int relays[] = {16,5,D2,D3,D6,D5};
-
+const int relays[] = {D0,D1,D2,D3,D6,D5};
+static const uint8_t NUM_OF_RELAYS = 6;
 
 const char HTML[] PROGMEM = R"====(
 <!DOCTYPE HTML>
@@ -40,15 +38,17 @@ const char HTML[] PROGMEM = R"====(
 </html>
 )====";
 
-uint32_t SHORT_PULSE = 100;
-uint32_t LONG_PULSE = 500;
+static const uint32_t SHORT_PULSE = 100;
+static const uint32_t LONG_PULSE = 500;
+bool pulsing[NUM_OF_RELAYS];
+uint32_t stoptime[NUM_OF_RELAYS];
+
 
 void pulseRelay(uint8_t relayNum, uint32_t time) {
     digitalWrite(relays[relayNum], 1);
     digitalWrite(led, 1);
-    delay(time);
-    digitalWrite(relays[relayNum], 0);
-    digitalWrite(led, 0);
+    pulsing[relayNum] = true;
+    stoptime[relayNum] = millis() + time;
 }
 
 void handleRoot() {
@@ -69,9 +69,10 @@ void handleNotFound() {
 }
 
 void setup(void) {
-  for(uint8_t i=0U; i<6;i++) {
-    pinMode(relays[i], OUTPUT);
+  for(uint8_t i=0U; i<NUM_OF_RELAYS;i++) {
     digitalWrite(relays[i], 0);
+    pinMode(relays[i], OUTPUT);
+    pulsing[i] = false;
   }
   pinMode(led, OUTPUT);
   digitalWrite(led, 0);
@@ -122,4 +123,15 @@ void loop(void) {
   server.handleClient();
   ArduinoOTA.handle();
   MDNS.update();
+  handlePulses();
+}
+
+void handlePulses() {
+    for(uint8_t i=0U; i<NUM_OF_RELAYS;i++) {
+      if ((pulsing[i]) && (millis() > stoptime[i])) {
+        pulsing[i] = false;
+        digitalWrite(relays[i], 0);
+        digitalWrite(led, 0);
+      }
+    }
 }
