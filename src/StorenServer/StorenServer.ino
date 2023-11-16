@@ -12,28 +12,28 @@ const int relays[] = {D0,D1,D2,D3,D6,D5};
 static const uint8_t NUM_OF_RELAYS = 6;
 
 const char HTML[] PROGMEM = R"====(
-<!DOCTYPE HTML>
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Storensteuerung</title>
+    <style>
+        body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;height:100vh}
+        table{border-collapse:collapse}
+        th,td{padding:5px;padding-right:50px;font-size:50px;text-align:center}
+        a{text-decoration:none;color:inherit}
+        button{width:100px;height:100px;font-size:50px}
+    </style>
 </head>
-
 <body>
-    <a href="/s0"><button>s0</button></a>
-    <a href="/s1"><button>s1</button></a>
-    <a href="/s2"><button>s2</button></a>
-    <a href="/s3"><button>s3</button></a>
-    <a href="/s4"><button>s4</button></a>
-    <a href="/s5"><button>s5</button></a>
-    <br>
-    <a href="/l0"><button>l0</button></a>
-    <a href="/l1"><button>l1</button></a>
-    <a href="/l2"><button>l2</button></a>
-    <a href="/l3"><button>l3</button></a>
-    <a href="/l4"><button>l4</button></a>
-    <a href="/l5"><button>l5</button></a>
-    <br>
+    <table>
+        <tr><th>1</th><th>2</th><th>3</th></tr>
+        <tr><td><a href="/l0"><button>&#8607;</button></a></td><td><a href="/l2"><button>&#8607;</button></a></td><td><a href="/l4"><button>&#8607;</button></a></td></tr>
+        <tr><td><a href="/s0"><button>&#8593;</button></a></td><td><a href="/s2"><button>&#8593;</button></a></td><td><a href="/s4"><button>&#8593;</button></a></td></tr>
+        <tr><td><a href="/s1"><button>&#8595;</button></a></td><td><a href="/s3"><button>&#8595;</button></a></td><td><a href="/s5"><button>&#8595;</button></a></td></tr>
+        <tr><td><a href="/l1"><button>&#8609;</button></a></td><td><a href="/l3"><button>&#8609;</button></a></td><td><a href="/l5"><button>&#8609;</button></a></td></tr>
+    </table>
 </body>
 </html>
 )====";
