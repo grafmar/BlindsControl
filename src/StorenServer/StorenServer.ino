@@ -21,7 +21,7 @@ const char HTML[] PROGMEM = R"====(
     <style>
         body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;height:100vh}
         table{border-collapse:collapse}
-        th,td{padding:5px;padding-right:50px;font-size:50px;text-align:center}
+        th,td{padding:5px;padding-left:20px;padding-right:20px;font-size:50px;text-align:center}
         a{text-decoration:none;color:inherit}
         button{width:100px;height:100px;font-size:50px}
     </style>
