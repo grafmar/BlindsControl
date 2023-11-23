@@ -2,10 +2,12 @@
 #include <WiFiManager.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#include <ESP8266HTTPUpdateServer.h>
 
 WiFiManager wm;
   
 ESP8266WebServer server(80);
+ESP8266HTTPUpdateServer httpUpdater;
 
 const int led = LED_BUILTIN;
 const int relays[] = {D0,D1,D2,D3,D6,D5};
@@ -95,6 +97,9 @@ void setup(void) {
   Serial.println(WiFi.localIP());
 
   if (MDNS.begin("Storensteuerung")) { Serial.println("MDNS responder started"); }
+  MDNS.addService("http", "tcp", 80);
+
+  httpUpdater.setup(&server);
 
   /////////////////////////////////////////////////////////
   // Handlers
