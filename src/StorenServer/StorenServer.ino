@@ -5,12 +5,12 @@
 #include <ESP8266HTTPUpdateServer.h>
 
 WiFiManager wm;
-  
+
 ESP8266WebServer server(80);
 ESP8266HTTPUpdateServer httpUpdater;
 
 const int led = LED_BUILTIN;
-const int relays[] = {D0,D1,D2,D3,D6,D5};
+const int relays[] = { D0, D1, D2, D3, D6, D5 };
 static const uint8_t NUM_OF_RELAYS = 6;
 
 const char HTML[] PROGMEM = R"====(
@@ -31,13 +31,35 @@ const char HTML[] PROGMEM = R"====(
 <body>
     <table>
         <tr><th>1</th><th>2</th><th>3</th></tr>
-        <tr><td><a href="/l0"><button>&#8607;</button></a></td><td><a href="/l2"><button>&#8607;</button></a></td><td><a href="/l4"><button>&#8607;</button></a></td></tr>
-        <tr><td><a href="/s0"><button>&#8593;</button></a></td><td><a href="/s2"><button>&#8593;</button></a></td><td><a href="/s4"><button>&#8593;</button></a></td></tr>
-        <tr><td><a href="/s1"><button>&#8595;</button></a></td><td><a href="/s3"><button>&#8595;</button></a></td><td><a href="/s5"><button>&#8595;</button></a></td></tr>
-        <tr><td><a href="/l1"><button>&#8609;</button></a></td><td><a href="/l3"><button>&#8609;</button></a></td><td><a href="/l5"><button>&#8609;</button></a></td></tr>
+        <tr><td><button title="NumpadSubtract" onclick="sendCtrl('/l0')">&#8607;</button></td><td><button title="NumpadDivide" onclick="sendCtrl('/l2')">&#8607;</button></td><td><button title="NumpadMultiply" onclick="sendCtrl('/l4')">&#8607;</button></td></tr>
+        <tr><td><button title="Numpad7" onclick="sendCtrl('/s0')">&#8593;</button></td><td><button title="Numpad8" onclick="sendCtrl('/s2')">&#8593;</button></td><td><button title="Numpad9" onclick="sendCtrl('/s4')">&#8593;</button></td></tr>
+        <tr><td><button title="Numpad4" onclick="sendCtrl('/s1')">&#8595;</button></td><td><button title="Numpad5" onclick="sendCtrl('/s3')">&#8595;</button></td><td><button title="Numpad6" onclick="sendCtrl('/s5')">&#8595;</button></td></tr>
+        <tr><td><button title="Numpad1" onclick="sendCtrl('/l1')">&#8609;</button></td><td><button title="Numpad2" onclick="sendCtrl('/l3')">&#8609;</button></td><td><button title="Numpad3" onclick="sendCtrl('/l5')">&#8609;</button></td></tr>
     </table>
-</body>
-</html>
+<script>
+function sendCtrl(url) {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", url);
+  xhr.send();
+}
+document.onkeydown = function(e) {
+  if (e.code == "NumpadSubtract") {e.preventDefault();sendCtrl('/l0'); }
+  if (e.code == "Numpad7")        {e.preventDefault();sendCtrl('/s0'); }
+  if (e.code == "Numpad4")        {e.preventDefault();sendCtrl('/s1'); }
+  if (e.code == "Numpad1")        {e.preventDefault();sendCtrl('/l1'); }
+  
+  if (e.code == "NumpadDivide")   {e.preventDefault();sendCtrl('/l2'); }
+  if (e.code == "Numpad8")        {e.preventDefault();sendCtrl('/s2'); }
+  if (e.code == "Numpad5")        {e.preventDefault();sendCtrl('/s3'); }
+  if (e.code == "Numpad2")        {e.preventDefault();sendCtrl('/l3'); }
+  
+  if (e.code == "NumpadMultiply") {e.preventDefault();sendCtrl('/l4'); }
+  if (e.code == "Numpad9")        {e.preventDefault();sendCtrl('/s4'); }
+  if (e.code == "Numpad6")        {e.preventDefault();sendCtrl('/s5'); }
+  if (e.code == "Numpad3")        {e.preventDefault();sendCtrl('/l5'); }
+};
+</script>
+</body></html>
 )====";
 
 static const uint32_t SHORT_PULSE = 100;
@@ -47,14 +69,19 @@ uint32_t stoptime[NUM_OF_RELAYS];
 
 
 void pulseRelay(uint8_t relayNum, uint32_t time) {
-    digitalWrite(relays[relayNum], 1);
-    digitalWrite(led, 1);
-    pulsing[relayNum] = true;
-    stoptime[relayNum] = millis() + time;
+  digitalWrite(relays[relayNum], 1);
+  digitalWrite(led, 1);
+  pulsing[relayNum] = true;
+  stoptime[relayNum] = millis() + time;
 }
 
 void handleRoot() {
   server.send(200, "text/html", HTML);
+}
+
+void redirectToRoot() {
+  server.sendHeader("Location", String("/"), true);
+  server.send ( 302, "text/plain", "");
 }
 
 void handleNotFound() {
@@ -71,7 +98,7 @@ void handleNotFound() {
 }
 
 void setup(void) {
-  for(uint8_t i=0U; i<NUM_OF_RELAYS;i++) {
+  for (uint8_t i = 0U; i < NUM_OF_RELAYS; i++) {
     digitalWrite(relays[i], 0);
     pinMode(relays[i], OUTPUT);
     pulsing[i] = false;
@@ -80,8 +107,8 @@ void setup(void) {
   digitalWrite(led, 0);
 
   Serial.begin(115200);
-  
-  wm.autoConnect("StorenSteuerung_AP"); // anonymous ap
+
+  wm.autoConnect("StorenSteuerung_AP");  // anonymous ap
 
   Serial.println("");
 
@@ -104,18 +131,54 @@ void setup(void) {
   /////////////////////////////////////////////////////////
   // Handlers
   server.on("/", handleRoot);
-  server.on("/s0", []() { pulseRelay(0, SHORT_PULSE); handleRoot(); });
-  server.on("/s1", []() { pulseRelay(1, SHORT_PULSE); handleRoot(); });
-  server.on("/s2", []() { pulseRelay(2, SHORT_PULSE); handleRoot(); });
-  server.on("/s3", []() { pulseRelay(3, SHORT_PULSE); handleRoot(); });
-  server.on("/s4", []() { pulseRelay(4, SHORT_PULSE); handleRoot(); });
-  server.on("/s5", []() { pulseRelay(5, SHORT_PULSE); handleRoot(); });
-  server.on("/l0", []() { pulseRelay(0, LONG_PULSE);  handleRoot(); });
-  server.on("/l1", []() { pulseRelay(1, LONG_PULSE);  handleRoot(); });
-  server.on("/l2", []() { pulseRelay(2, LONG_PULSE);  handleRoot(); });
-  server.on("/l3", []() { pulseRelay(3, LONG_PULSE);  handleRoot(); });
-  server.on("/l4", []() { pulseRelay(4, LONG_PULSE);  handleRoot(); });
-  server.on("/l5", []() { pulseRelay(5, LONG_PULSE);  handleRoot(); });
+  server.on("/s0", []() {
+    pulseRelay(0, SHORT_PULSE);
+    redirectToRoot();
+  });
+  server.on("/s1", []() {
+    pulseRelay(1, SHORT_PULSE);
+    redirectToRoot();
+  });
+  server.on("/s2", []() {
+    pulseRelay(2, SHORT_PULSE);
+    redirectToRoot();
+  });
+  server.on("/s3", []() {
+    pulseRelay(3, SHORT_PULSE);
+    redirectToRoot();
+  });
+  server.on("/s4", []() {
+    pulseRelay(4, SHORT_PULSE);
+    redirectToRoot();
+  });
+  server.on("/s5", []() {
+    pulseRelay(5, SHORT_PULSE);
+    redirectToRoot();
+  });
+  server.on("/l0", []() {
+    pulseRelay(0, LONG_PULSE);
+    redirectToRoot();
+  });
+  server.on("/l1", []() {
+    pulseRelay(1, LONG_PULSE);
+    redirectToRoot();
+  });
+  server.on("/l2", []() {
+    pulseRelay(2, LONG_PULSE);
+    redirectToRoot();
+  });
+  server.on("/l3", []() {
+    pulseRelay(3, LONG_PULSE);
+    redirectToRoot();
+  });
+  server.on("/l4", []() {
+    pulseRelay(4, LONG_PULSE);
+    redirectToRoot();
+  });
+  server.on("/l5", []() {
+    pulseRelay(5, LONG_PULSE);
+    redirectToRoot();
+  });
   /////////////////////////////////////////////////////////
 
   server.begin();
@@ -132,11 +195,11 @@ void loop(void) {
 }
 
 void handlePulses() {
-    for(uint8_t i=0U; i<NUM_OF_RELAYS;i++) {
-      if ((pulsing[i]) && (millis() > stoptime[i])) {
-        pulsing[i] = false;
-        digitalWrite(relays[i], 0);
-        digitalWrite(led, 0);
-      }
+  for (uint8_t i = 0U; i < NUM_OF_RELAYS; i++) {
+    if ((pulsing[i]) && (millis() > stoptime[i])) {
+      pulsing[i] = false;
+      digitalWrite(relays[i], 0);
+      digitalWrite(led, 0);
     }
+  }
 }
