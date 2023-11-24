@@ -98,6 +98,16 @@ void handleNotFound() {
   server.send(404, "text/plain", message);
 }
 
+void handlePulses() {
+  for (uint8_t i = 0U; i < NUM_OF_RELAYS; i++) {
+    if ((pulsing[i]) && (millis() > stoptime[i])) {
+      pulsing[i] = false;
+      digitalWrite(relays[i], 0);
+      digitalWrite(led, 0);
+    }
+  }
+}
+
 void setup(void) {
   for (uint8_t i = 0U; i < NUM_OF_RELAYS; i++) {
     digitalWrite(relays[i], 0);
@@ -193,14 +203,4 @@ void loop(void) {
   ArduinoOTA.handle();
   MDNS.update();
   handlePulses();
-}
-
-void handlePulses() {
-  for (uint8_t i = 0U; i < NUM_OF_RELAYS; i++) {
-    if ((pulsing[i]) && (millis() > stoptime[i])) {
-      pulsing[i] = false;
-      digitalWrite(relays[i], 0);
-      digitalWrite(led, 0);
-    }
-  }
 }
