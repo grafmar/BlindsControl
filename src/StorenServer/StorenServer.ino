@@ -18,6 +18,7 @@ const char HTML[] PROGMEM = R"====(
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Storensteuerung</title>
+	<link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAEBACAAEAAQCwAAAAFgAAACgAAAAQAAAAIAAAAAEAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AAAAAAB//gAAfv4AAH7+AAB+/gAAfv4AAH7+AAB6vgAAfH4AAH7+AAD//wAAAAAAAP//AAAAAAAA//8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
     <style>
         body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;height:100vh}
         table{border-collapse:collapse}
@@ -39,7 +40,7 @@ const char HTML[] PROGMEM = R"====(
 )====";
 
 static const uint32_t SHORT_PULSE = 100;
-static const uint32_t LONG_PULSE = 500;
+static const uint32_t LONG_PULSE = 1000;
 bool pulsing[NUM_OF_RELAYS];
 uint32_t stoptime[NUM_OF_RELAYS];
 
