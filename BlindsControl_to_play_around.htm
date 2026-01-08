@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" class=" jkrpqixi idc0_349"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storensteuerung</title>
+    <style>
+        body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;height:100vh}
+        table{border-collapse:collapse}
+        th,td{padding:5px;padding-right:50px;font-size:50px;text-align:center}
+        a{text-decoration:none;color:inherit}
+        button{width:100px;height:100px;font-size:50px}
+    </style>
+</head>
+<body>
+    <table>
+        <tr><th>1</th><th>2</th><th>3</th></tr>
+        <tr><td><button title="NumpadSubtract" onclick="sendCtrl('/l0')">&#8607;</button></td><td><button title="NumpadDivide" onclick="sendCtrl('/l2')">&#8607;</button></td><td><button title="NumpadMultiply" onclick="sendCtrl('/l4')">&#8607;</button></td></tr>
+        <tr><td><button title="Numpad7" onclick="sendCtrl('/s0')">&#8593;</button></td><td><button title="Numpad8" onclick="sendCtrl('/s2')">&#8593;</button></td><td><button title="Numpad9" onclick="sendCtrl('/s4')">&#8593;</button></td></tr>
+        <tr><td><button title="Numpad4" onclick="sendCtrl('/s1')">&#8595;</button></td><td><button title="Numpad5" onclick="sendCtrl('/s3')">&#8595;</button></td><td><button title="Numpad6" onclick="sendCtrl('/s5')">&#8595;</button></td></tr>
+        <tr><td><button title="Numpad1" onclick="sendCtrl('/l1')">&#8609;</button></td><td><button title="Numpad2" onclick="sendCtrl('/l3')">&#8609;</button></td><td><button title="Numpad3" onclick="sendCtrl('/l5')">&#8609;</button></td></tr>
+    </table>
+<script>
+function sendCtrl(url) {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", url);
+  xhr.send();
+}
+document.onkeydown = function(e) {
+  if (e.code == "NumpadSubtract") {e.preventDefault();sendCtrl('/l0'); }
+  if (e.code == "Numpad7")        {e.preventDefault();sendCtrl('/s0'); }
+  if (e.code == "Numpad4")        {e.preventDefault();sendCtrl('/s1'); }
+  if (e.code == "Numpad1")        {e.preventDefault();sendCtrl('/l1'); }
+  
+  if (e.code == "NumpadDivide")   {e.preventDefault();sendCtrl('/l2'); }
+  if (e.code == "Numpad8")        {e.preventDefault();sendCtrl('/s2'); }
+  if (e.code == "Numpad5")        {e.preventDefault();sendCtrl('/s3'); }
+  if (e.code == "Numpad2")        {e.preventDefault();sendCtrl('/l3'); }
+  
+  if (e.code == "NumpadMultiply") {e.preventDefault();sendCtrl('/l4'); }
+  if (e.code == "Numpad9")        {e.preventDefault();sendCtrl('/s4'); }
+  if (e.code == "Numpad6")        {e.preventDefault();sendCtrl('/s5'); }
+  if (e.code == "Numpad3")        {e.preventDefault();sendCtrl('/l5'); }
+};
+</script>
+</body></html>
